@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Reddit</string>
+    <string name="JsonURL">https://www.reddit.com/r/popular/.json</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label">reddit Image</string>
+    <string name="welcome">Welcome </string>
+    <string name="Home">Home</string>
+    <string name="Favourite">Favourite</string>
+    <string name="label_button">add post to favourite</string>
+    <string name="add_widget">Add widget</string>
+    <string name="auth">Authentication failed.</string>
+    <string name="require">Required.</string>
+    <string name="EmailPassword">EmailPassword</string>
+    <string name="gmail">mail</string>
+    <string name="password">password</string>
+    <string name="Login">Login</string>
+    <string name="sign_up">SignUp</string>
+    <string name="reddit">Reddit</string>
+    <string name="profile">profile</string>
+    <string name="sign_out">Sign out</string>
+    <string name="favourite">this item marked as FAVOURITE</string>
+    <string name="not_favourite">This item is already marked as FAVOURITE</string>
+</resources>

@@ -1,0 +1,104 @@
+{
+  "project_info": {
+    "project_number": "897639657672",
+    "firebase_url": "https://capstonetwo-c4aae.firebaseio.com",
+    "project_id": "capstonetwo-c4aae",
+    "storage_bucket": "capstonetwo-c4aae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897639657672:android:cb0171044b5b4b24",
+        "android_client_info": {
+          "package_name": "com.example.Samar.capstonetwo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897639657672-i5qj7brgej7tqm17j4qa5krsuj2e85i6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT4ApwvhqHTFgPF9osBJhR745vL0idjNc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897639657672:android:6f7d7e82f029c2cb",
+        "android_client_info": {
+          "package_name": "com.example.Samar.capstonetwo.free"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897639657672-i5qj7brgej7tqm17j4qa5krsuj2e85i6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT4ApwvhqHTFgPF9osBJhR745vL0idjNc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897639657672:android:07a4a657185f24f8",
+        "android_client_info": {
+          "package_name": "com.example.Samar.capstonetwo.paid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "897639657672-i5qj7brgej7tqm17j4qa5krsuj2e85i6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT4ApwvhqHTFgPF9osBJhR745vL0idjNc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
