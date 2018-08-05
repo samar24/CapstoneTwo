@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,7 @@ import android.widget.Toast;
 import com.example.Samar.capstonetwo.R;
 import com.example.Samar.capstonetwo.activities.DetailActivity;
 import com.example.Samar.capstonetwo.adapters.RedditAdapter;
-import com.example.Samar.capstonetwo.loaders.SubRedditLoader;
+import com.example.Samar.capstonetwo.loaders.SubRedditAsynkTask;
 import com.example.Samar.capstonetwo.model.Data_;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -37,16 +38,17 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapterViewHolderOnClickHandler,SubRedditLoader.onRedditDeliver {
+public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapterViewHolderOnClickHandler,SubRedditAsynkTask.onRedditDeliver {
 
     private RecyclerView mRecyclerView;
     private RedditAdapter recipesAdapter;
-    // private RecipesAdapter recipesAdapter;
-    private static final int SUBREDDIT_LOADER_ID = 0;
+
     private InterstitialAd mInterstitialAd;
 
     private ImageView imageView;
     private Intent intent;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private Parcelable mLayoutManagerSavedState;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -86,7 +88,9 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_view);
         imageView = (ImageView) rootView.findViewById(R.id.image);
-
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+        }
         //banner ads
         AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
         // mAdView.setAdListener(new myAdListener(getActivity()));
@@ -131,7 +135,7 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
 
 
 
-        getLoaderManager().initLoader(SUBREDDIT_LOADER_ID, null, new SubRedditLoader(this, getContext())).forceLoad();
+        new SubRedditAsynkTask(this,getActivity()).execute();
 
         return rootView;
 
@@ -141,22 +145,25 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
 
 
         if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mLayoutManager=new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         } else if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            mLayoutManager=new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         } else {
-
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+            mLayoutManager=new GridLayoutManager(getActivity(), 4);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         }
         recipesAdapter = new RedditAdapter(getContext(), this, dataList);
+        recipesAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(recipesAdapter);
 
 
     }
+
 
 
     @Override
@@ -171,8 +178,7 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     @Override
     public void onStart() {
         super.onStart();
-        getLoaderManager().restartLoader(SUBREDDIT_LOADER_ID, null, new SubRedditLoader(this, getActivity())).forceLoad();
-
+      //  new SubRedditAsynkTask(this,getActivity()).execute();
     }
 
     @Override
@@ -193,6 +199,11 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
 
 
 
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("State", mLayoutManager.onSaveInstanceState());
     }
 }
 

@@ -32,7 +32,8 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     // private RecipesAdapter recipesAdapter;
     private static final int SUBREDDIT_LOADER_ID = 0;
     private ImageView imageView;
-
+    private RecyclerView.LayoutManager mLayoutManager;
+    private Parcelable mLayoutManagerSavedState;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -48,10 +49,11 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_view);
         imageView = (ImageView) rootView.findViewById(R.id.image);
 
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+        }
 
-
-        getLoaderManager().initLoader(SUBREDDIT_LOADER_ID, null, new SubRedditLoader(this, getContext())).forceLoad();
-
+        new SubRedditAsynkTask(this,getActivity()).execute();
         return rootView;
 
     }
@@ -60,23 +62,24 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
 
 
         if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mLayoutManager=new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         } else if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            mLayoutManager=new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         } else {
-
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+            mLayoutManager=new GridLayoutManager(getActivity(), 4);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         }
         recipesAdapter = new RedditAdapter(getContext(), this, dataList);
+        recipesAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(recipesAdapter);
 
 
     }
-
 
     @Override
     public void onRedditDeliver(List<Data_> children) {
@@ -91,6 +94,11 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     public void onStart() {
         super.onStart();
         getLoaderManager().restartLoader(SUBREDDIT_LOADER_ID, null, new SubRedditLoader(this, getActivity())).forceLoad();
+
+        if (mLayoutManagerSavedState != null) {
+            mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
+
+        }
 
     }
 
@@ -122,6 +130,11 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
         }
 
 
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("State", mLayoutManager.onSaveInstanceState());
     }
 }
 

@@ -5,15 +5,16 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:paddingTop="70dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         android:background="@color/colorPrimaryDark">
 
         <ImageView android:src="@drawable/reddit"
             android:layout_width="wrap_content"
             android:layout_height="80dp"
             android:layout_marginBottom="24dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="Login and signup page" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

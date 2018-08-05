@@ -88,4 +88,5 @@ public class FavouriteFragment extends Fragment  implements CursorAdapter.Favour
 
 
     }
+
 }
