@@ -22,4 +22,6 @@
     <string name="sign_out">Sign out</string>
     <string name="favourite">this item marked as FAVOURITE</string>
     <string name="not_favourite">This item is already marked as FAVOURITE</string>
+    <string name="Details">Details for single thread</string>
+    <string name="SignupPage">Login and Signup Page</string>
 </resources>

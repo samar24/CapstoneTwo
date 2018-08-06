@@ -41,7 +41,7 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/reddit"
                     android:scaleType="fitCenter"
-                    android:contentDescription="Details for single thread" />
+                    android:contentDescription= "@string/Details"/>
 
             </LinearLayout>
 

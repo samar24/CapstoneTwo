@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,7 +28,8 @@ public class FavouriteFragment extends Fragment  implements CursorAdapter.Favour
     RecyclerView mRecyclerView;
     CursorAdapter favouriteAdapter;
     private static final int LOADER_ID = 4;
-
+    private RecyclerView.LayoutManager mLayoutManager;
+    private Parcelable mLayoutManagerSavedState;
     public FavouriteFragment() {
     }
 
@@ -39,18 +41,21 @@ public class FavouriteFragment extends Fragment  implements CursorAdapter.Favour
 
         View rootView = inflater.inflate(R.layout.fragment_favourite, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_view_favourite);
-
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+        }
 
         if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mLayoutManager=new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         } else if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            mLayoutManager=new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         } else {
-
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+            mLayoutManager=new GridLayoutManager(getActivity(), 4);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
         }
 
@@ -67,7 +72,10 @@ public class FavouriteFragment extends Fragment  implements CursorAdapter.Favour
     public void onStart() {
         super.onStart();
         getLoaderManager().restartLoader(LOADER_ID, null, new CursorLoader(this, getActivity())).forceLoad();
+        if (mLayoutManagerSavedState != null) {
+            mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
 
+        }
 
     }
 
@@ -88,5 +96,23 @@ public class FavouriteFragment extends Fragment  implements CursorAdapter.Favour
 
 
     }
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("State", mLayoutManager.onSaveInstanceState());
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mLayoutManagerSavedState != null) {
+            mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
+        }
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Retrieve list state and list/item positions
+        if(savedInstanceState != null)
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+    }
 }

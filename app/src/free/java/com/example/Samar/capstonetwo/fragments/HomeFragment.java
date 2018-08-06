@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.transition.Transition;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +78,9 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
                 .addTestDevice(com.google.android.gms.ads.AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mInterstitialAd.loadAd(adRequestInterstitial);
+        if (mLayoutManagerSavedState != null) {
+         mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
+        }
     }
 
     @Override
@@ -88,6 +92,19 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_view);
         imageView = (ImageView) rootView.findViewById(R.id.image);
+        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mLayoutManager=new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+        } else if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mLayoutManager=new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+        } else {
+            mLayoutManager=new GridLayoutManager(getActivity(), 4);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+        }
         if (savedInstanceState != null) {
             mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
         }
@@ -144,19 +161,7 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     public void loadAdapterWithData(ArrayList<Data_> dataList) {
 
 
-        if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mLayoutManager=new LinearLayoutManager(getContext());
-            mRecyclerView.setLayoutManager(mLayoutManager);
 
-        } else if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mLayoutManager=new GridLayoutManager(getActivity(), 2);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-
-        } else {
-            mLayoutManager=new GridLayoutManager(getActivity(), 4);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-
-        }
         recipesAdapter = new RedditAdapter(getContext(), this, dataList);
         recipesAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(recipesAdapter);
@@ -179,7 +184,9 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     public void onStart() {
         super.onStart();
       //  new SubRedditAsynkTask(this,getActivity()).execute();
+
     }
+
 
     @Override
     public void onClick(Data_ child) {
@@ -204,6 +211,24 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("State", mLayoutManager.onSaveInstanceState());
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Retrieve list state and list/item positions
+        if(savedInstanceState != null)
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+        mRecyclerView.getLayoutManager().onRestoreInstanceState(mLayoutManagerSavedState);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mLayoutManagerSavedState);
+        }
     }
 }
 

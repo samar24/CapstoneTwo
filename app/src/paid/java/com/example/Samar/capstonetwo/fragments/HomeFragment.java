@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,17 +17,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.Samar.capstonetwo.R;
 import com.example.Samar.capstonetwo.activities.DetailActivity;
 import com.example.Samar.capstonetwo.adapters.RedditAdapter;
-import com.example.Samar.capstonetwo.loaders.SubRedditLoader;
+import com.example.Samar.capstonetwo.loaders.SubRedditAsynkTask;
 import com.example.Samar.capstonetwo.model.Data_;
 
 
 import java.util.ArrayList;
 import java.util.List;
-public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapterViewHolderOnClickHandler,SubRedditLoader.onRedditDeliver {
+
+public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapterViewHolderOnClickHandler,SubRedditAsynkTask.onRedditDeliver{
 
     private RecyclerView mRecyclerView;
     private RedditAdapter recipesAdapter;
@@ -48,19 +53,6 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_view);
         imageView = (ImageView) rootView.findViewById(R.id.image);
-
-        if (savedInstanceState != null) {
-            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
-        }
-
-        new SubRedditAsynkTask(this,getActivity()).execute();
-        return rootView;
-
-    }
-
-    public void loadAdapterWithData(ArrayList<Data_> dataList) {
-
-
         if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             mLayoutManager=new LinearLayoutManager(getContext());
             mRecyclerView.setLayoutManager(mLayoutManager);
@@ -74,13 +66,31 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
             mRecyclerView.setLayoutManager(mLayoutManager);
 
         }
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+        }
+
+        new SubRedditAsynkTask(this,getActivity()).execute();
+        return rootView;
+
+    }
+
+    public void loadAdapterWithData(ArrayList<Data_> dataList) {
+
+
+
         recipesAdapter = new RedditAdapter(getContext(), this, dataList);
         recipesAdapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(recipesAdapter);
 
 
     }
-
+    @Override
+    public void onResume() {
+        if (mLayoutManagerSavedState != null) {
+            mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
+        }
+    }
     @Override
     public void onRedditDeliver(List<Data_> children) {
 
@@ -93,7 +103,6 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     @Override
     public void onStart() {
         super.onStart();
-        getLoaderManager().restartLoader(SUBREDDIT_LOADER_ID, null, new SubRedditLoader(this, getActivity())).forceLoad();
 
         if (mLayoutManagerSavedState != null) {
             mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
@@ -135,6 +144,24 @@ public class HomeFragment  extends Fragment implements RedditAdapter.RedditAdapt
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("State", mLayoutManager.onSaveInstanceState());
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Retrieve list state and list/item positions
+        if(savedInstanceState != null)
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+        mRecyclerView.getLayoutManager().onRestoreInstanceState(mLayoutManagerSavedState);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable("State");
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mLayoutManagerSavedState);
+        }
     }
 }
 
